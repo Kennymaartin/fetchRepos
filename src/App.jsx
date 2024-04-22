@@ -44,7 +44,7 @@ function App() {
             Profile-Form
           </Box>
           <Box className="wp_repo" p="3rem">
-            Wp_pusher
+            Wp-pusher
           </Box>
         </Box>
 
