@@ -16,7 +16,7 @@ import {
   Link as ChakraLink,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import {Link, Outlet} from 'react-router-dom';
+import { Link, Outlet} from 'react-router-dom';
 import { Routes, Route } from "react-router-dom";
 
 
@@ -92,10 +92,10 @@ function Repos() {
             List of Repositories:
           </Text>
           <Spacer />
-          <Input placeholder="Search for Repositories" w="500px" />
+          <Input placeholder="Looking a repository?" w="500px" borderColor="#000" />
         </Box>
 
-         <TableContainer
+        <TableContainer
           // display={{ sm: "", xl: "block" }}
           borderRadius="20px"
           border="2px solid #000"
@@ -123,8 +123,8 @@ function Repos() {
                       <Td>{repo.name}</Td>
                       <Td>
                         <Button
-                          borderRadius={50}
-                        
+                          borderRadius={20}
+
                           hover={{
                             bg: 'green',
                           }}
@@ -142,7 +142,7 @@ function Repos() {
                 })}
             </Tbody>
           </Table>
-        </TableContainer> 
+        </TableContainer>
 
         <Box as="nav" paddingY={5}>
           <List
