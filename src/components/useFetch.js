@@ -6,7 +6,7 @@ import { useState,useEffect } from "react";
   
   useEffect(() => {
     const abortCont = new AbortController();
-    fetch("https://api.github.com/users/kennymartin16/repos", { signal: abortCont.signal })
+    fetch("https://api.github.com/users/kennymaartin/repos", { signal: abortCont.signal })
       .then((res) => {
         if (!res.ok) {
           throw Error("Could not fetch the data for that resource");
