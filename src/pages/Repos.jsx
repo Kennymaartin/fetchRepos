@@ -14,34 +14,34 @@ import {
   List,
   ListItem,
   Link as ChakraLink,
+  Skeleton, SkeletonText
 } from "@chakra-ui/react";
+// import { Skeleton, SkeletonText } from "@chakra-ui/react"
 import { useEffect, useState } from "react";
-import { Link, Outlet} from 'react-router-dom';
-import { Routes, Route } from "react-router-dom";
-
-
-
+import { Link } from 'react-router-dom';
 
 function Repos() {
   const [apiData, setApiData] = useState([]);
-
   const [search, setSearch] = useState("");
-
   const [currentPage, setCurrentPage] = useState(1);
-  const recordsPerPage = 3;
+  const recordsPerPage = 5;
   const indexOfLastRecord = currentPage * recordsPerPage;
   const firstIndex = indexOfLastRecord - recordsPerPage;
   const records = apiData.slice(firstIndex, indexOfLastRecord);
   const noOfPages = Math.ceil(apiData.length / recordsPerPage);
   const numbers = [...Array(noOfPages + 1).keys()].slice(1);
+  const [isLoading, setIsLoading] = useState(true);
+
 
   useEffect(() => {
-    fetch("https://api.github.com/users/kennymartin16/repos")
+    fetch("https://api.github.com/users/kennymaartin/repos")
       .then((response) => response.json())
       .then((data) => {
         setApiData(data);
+        setIsLoading(false);
       })
-      .catch((error) => {
+      .catch(() => {
+        setIsLoading(false);
       });
   }, []);
   // console.log(useEffect());
@@ -88,11 +88,14 @@ function Repos() {
             base: "2",
           }}
         >
-          <Text fontSize={"2xl"} as={"b"}>
-            List of Repositories:
-          </Text>
+          <SkeletonText isLoaded={!isLoading} noOfLines={1} spacing="4" skeletonHeight="6">
+            <Text fontSize={"2xl"} as={"b"}>List of Repositories:</Text>
+          </SkeletonText>
+
           <Spacer />
-          <Input placeholder="Looking a repository?" w="500px" borderColor="#000" />
+          <Input placeholder="Looking a repository?" w="500px" borderColor="#000"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)} />
         </Box>
 
         <TableContainer
@@ -101,46 +104,53 @@ function Repos() {
           border="2px solid #000"
         >
           <Table variant={"striped"} colorScheme="brand.white">
-            <Thead bg="#121414" height="70px">
+            <Thead bg="#121414" height="70px" >
               <Tr>
                 <Th color="white">Created Date</Th>
                 <Th color="white">Repository Name</Th>
                 <Th color="white">Language</Th>
-                <Th color="black"></Th>
+                <Th color="white"></Th>
               </Tr>
             </Thead>
+
+
             <Tbody>
-              {records
-                .filter((repo) => {
-                  return search.toLowerCase() === ""
-                    ? repo
-                    : repo.name.toLowerCase().includes(search.toLowerCase());
-                })
-                .map((repo) => {
-                  return (
+              {isLoading ? (
+                // Show 5 skeleton rows (same number as `recordsPerPage`)
+                [...Array(recordsPerPage)].map((_, index) => (
+                  <Tr key={index}>
+                    <Td><Skeleton height="20px" /></Td>
+                    <Td><Skeleton height="20px" /></Td>
+                    <Td><Skeleton height="20px" width="60%" /></Td>
+                    <Td><Skeleton height="32px" width="80px" borderRadius="md" /></Td>
+                  </Tr>
+                ))
+              ) : (
+                records
+                  .filter((repo) =>
+                    search.toLowerCase() === ""
+                      ? repo
+                      : repo.name.toLowerCase().includes(search.toLowerCase())
+                  )
+                  .map((repo) => (
                     <Tr key={repo.id}>
-                      <Td>{repo.created_at}</Td>
+                      <Td>{repo.created_at ? new Date(repo.created_at).toLocaleDateString() : "N/A"}</Td>
                       <Td>{repo.name}</Td>
                       <Td>
-                        <Button
-                          borderRadius={20}
-
-                          hover={{
-                            bg: 'green',
-                          }}
-                        >
+                        <Button borderRadius={20} _hover={{ bg: '#897676' }}>
                           {repo.language}
                         </Button>
                       </Td>
                       <Td>
-                        <Link to={`/Repo/${repo.name}`}>
-                          <Button variant="primary">Details</Button>
+                        <Link to={`/repo/${repo.name}`}>
+                          <Button colorScheme="teal">Details</Button>
                         </Link>
                       </Td>
                     </Tr>
-                  );
-                })}
+                  ))
+              )}
             </Tbody>
+
           </Table>
         </TableContainer>
 
@@ -193,7 +203,7 @@ function Repos() {
       </Box>
     </>
   );
-};
+}
 
 
 export default Repos;
